@@ -45,7 +45,7 @@ tg_post_msg "<b>xRageTC: Toolchain Compilation Started</b>%0A<b>Date : </b><code
 msg "xRageTC: Building LLVM..."
 tg_post_msg "<b>xRageTC: Building LLVM. . .</b>"
 ./build-llvm.py \
-	--clang-vendor "xRage-tc" \
+	--clang-vendor "xRageTC" \
 	--projects "clang;lld;polly" \
 	--targets "ARM;AArch64" \
 	--shallow-clone \
