@@ -17,7 +17,7 @@ DIR="$(pwd ...)"
 
 # Inlined function to post a message
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
-export BOT_BUILD_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
+export BOT_STICKER_URL="https://api.telegram.org/bot$TG_TOKEN/sendSticker"
 tg_post_msg() {
 	curl -s -X POST "$BOT_MSG_URL" -d chat_id="$TG_CHAT_ID" \
 	-d "disable_web_page_preview=true" \
@@ -26,11 +26,16 @@ tg_post_msg() {
 
 }
 tg_post_build() {
-	curl --progress-bar -F document=@"$1" "$BOT_BUILD_URL" \
+	curl --progress-bar -F document=@"$1" "$BOT_MSG_URL" \
 	-F chat_id="$TG_CHAT_ID"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
 	-F caption="$3"
+}
+tg_post_sticker() {
+        curl -s -X POST "$BOT_STICKER_URL" \
+        -d sticker="CAACAgUAAxkBAAEChTpg3zFUu3HsITgLjKGhBS6sIp2-wQAChQUAAnOf-VYKFnGr8lJJAAEgBA" \
+        -d chat_id="$TG_CHAT_ID"
 }
 
 # Build Info
@@ -39,6 +44,7 @@ rel_friendly_date="$(date "+%B %-d, %Y")" # "Month day, year" format
 builder_commit="$(git rev-parse HEAD)"
 
 # Send a notificaton to TG
+tg_post_sticker
 tg_post_msg "<b>xRageTC: Toolchain Compilation Started</b>%0A<b>Date : </b><code>$rel_friendly_date</code>%0A<b>Toolchain Script Commit : </b><code>$builder_commit</code>%0A"
 
 # Build LLVM
