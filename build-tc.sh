@@ -48,18 +48,42 @@ tg_post_sticker
 tg_post_msg "<b>xRageTC: Toolchain Compilation Started</b>%0A<b>Date : </b><code>$rel_friendly_date</code>%0A<b>Toolchain Script Commit : </b><code>$builder_commit</code>%0A"
 
 # Build LLVM
-msg "xRageTC: Building LLVM..."
-tg_post_msg "<b>xRageTC: Building LLVM. . .</b>"
-./build-llvm.py \
-	--clang-vendor "xRageTC" \
-	--projects "clang;lld;polly" \
-	--targets "ARM;AArch64" \
-	--shallow-clone \
-	--incremental \
-	--build-type "Release" 2>&1 | tee build.log
+PREFIX=install/
+msg "xRageTC: Downloading GCC source code"
+git clone https://git.linaro.org/toolchain/gcc.git -b master gcc --depth=1
+
+msg "xRageTC: Building GCC"
+    cd gcc
+    ./contrib/download_prerequisites
+    cd ../
+    mkdir build-gcc
+    cd build-gcc
+    ../gcc/configure --target=arm arm64 \
+                     --prefix="$PREFIX" \
+                     --disable-decimal-float \
+                     --disable-libffi \
+                     --disable-libgomp \
+                     --disable-libmudflap \
+                     --disable-libquadmath \
+                     --disable-libstdcxx-pch \
+                     --disable-nls \
+                     --disable-shared \
+                     --disable-docs \
+                     --enable-default-ssp \
+                     --enable-languages=c,c++ \
+                     --with-pkgversion="xRageTC" \
+                     --with-newlib \
+                     --with-gnu-as \
+                     --with-gnu-ld \
+                     --with-sysroot
+    make CFLAGS="-O3 -pipe -ffunction-sections -fdata-sections" CXXFLAGS="-flto -O3 -pipe -ffunction-sections -fdata-sections" all-gcc -j$(nproc --all)
+    make CFLAGS="-O3 -pipe -ffunction-sections -fdata-sections" CXXFLAGS="-flto -O3 -pipe -ffunction-sections -fdata-sections" all-target-libgcc -j$(nproc --all)
+    make install-gcc -j$(nproc --all)
+    make install-target-libgcc -j$(nproc --all)
+
 
 # Check if the final clang binary exists or not.
-[ ! -f install/bin/clang-1* ] && {
+[ ! -f install/bin/gcc-1* ] && {
 	err "Building LLVM failed ! Kindly check errors !!"
 	tg_post_build "build.log" "$CHATID" "Error Log"
 	exit 1
@@ -105,6 +129,7 @@ tg_post_msg "<b>xRageTC: Toolchain compilation Finished</b>%0A<b>Clang Version :
 git config --global user.name "xyzuan"
 git config --global user.email "xyzuan@webmail.umm.ac.id"
 git clone "https://xyzuan:$GH_TOKEN@github.com/xyz-prjkt/xRageTC_build.git" rel_repo
+git checkout -b gcc
 pushd rel_repo || exit
 rm -fr ./*
 cp -r ../install/* .
