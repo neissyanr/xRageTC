@@ -48,11 +48,10 @@ tg_post_sticker
 tg_post_msg "<b>xRageTC: Toolchain Compilation Started</b>%0A<b>Date : </b><code>$rel_friendly_date</code>%0A<b>Toolchain Script Commit : </b><code>$builder_commit</code>%0A"
 
 # Build LLVM
-PREFIX=install/
-msg "xRageTC: Downloading GCC source code"
+tg_post_msg "xRageTC: Downloading GCC source code"
 git clone https://git.linaro.org/toolchain/gcc.git -b master gcc --depth=1
 
-msg "xRageTC: Building GCC"
+tg_post_msg "xRageTC: Building GCC"
     cd gcc
     ./contrib/download_prerequisites
     cd ../
