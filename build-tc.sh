@@ -50,6 +50,11 @@ tg_post_msg "<b>xRageTC: Toolchain Compilation Started</b>%0A<b>Date : </b><code
 # Build LLVM
 msg "xRageTC: Building LLVM..."
 tg_post_msg "<b>xRageTC: Building LLVM. . .</b>"
+
+CLANG_VER="$("$CLANG_ROOTDIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
+LLD_VER="$("$CLANG_ROOTDIR"/bin/ld.lld --version | head -n 1)"
+export KBUILD_COMPILER_STRING="$CLANG_VER with $LLD_VER"
+
 ./build-llvm.py \
 	--clang-vendor "xRageTC" \
 	--projects "clang;lld;polly" \
