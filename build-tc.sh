@@ -52,7 +52,7 @@ tg_post_msg "xRageTC: Downloading GCC source code"
 git clone https://git.linaro.org/toolchain/gcc.git -b master gcc --depth=1
 
 tg_post_msg "xRageTC: Building GCC"
-export PREFIX="$PWD/../gcc-aarch64-elf
+export PREFIX="$PWD/../gcc-aarch64-elf"
 export PATH="$PREFIX/bin:$PATH"
 
     cd gcc
