@@ -52,12 +52,15 @@ tg_post_msg "xRageTC: Downloading GCC source code"
 git clone https://git.linaro.org/toolchain/gcc.git -b master gcc --depth=1
 
 tg_post_msg "xRageTC: Building GCC"
+export PREFIX="$PWD/../gcc-aarch64-elf
+export PATH="$PREFIX/bin:$PATH"
+
     cd gcc
     ./contrib/download_prerequisites
     cd ../
     mkdir build-gcc
     cd build-gcc
-    ../gcc/configure --target=arm arm64 \
+    ../gcc/configure --target=arm64 \
                      --prefix="$PREFIX" \
                      --disable-decimal-float \
                      --disable-libffi \
