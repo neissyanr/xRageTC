@@ -59,7 +59,8 @@ export KBUILD_COMPILER_STRING="$CLANG_VER with $LLD_VER"
 	--clang-vendor "xRageTC" \
 	--projects "clang;lld;polly" \
 	--targets "ARM;AArch64" \
-	--shallow-clone \
+	--shallow-clone
+	--lto thin
 	--incremental \
 	--build-type "Release" 2>&1 | tee build.log
 
